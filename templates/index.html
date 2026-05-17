@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LexiPulse // Text Telemetry Engine</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen p-6 md:p-12">
+
+    <div class="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- HEADER BLOCK -->
+        <div class="lg:col-span-12 border-b border-slate-800 pb-4 mb-2">
+            <h1 class="text-3xl font-black text-emerald-400 tracking-tight">📊 LexiPulse</h1>
+            <p class="text-slate-400 text-sm mt-1">Full-stack text-telemetry processor mapping real-time syntactic calculations.</p>
+        </div>
+
+        <!-- LEFT PANEL: DATA INPUT ENGINE -->
+        <div class="lg:col-span-5 bg-slate-800 border border-slate-700 rounded-xl p-6 h-fit shadow-xl">
+            <h2 class="text-lg font-bold text-slate-200 mb-4">Text Ingestion Channel</h2>
+            
+            <form method="POST" class="space-y-4">
+                {% csrf_token %}
+                <textarea name="analyzed_text" rows="12" required 
+                          placeholder="Paste your source text block, article, logs or script data here..." 
+                          class="w-full bg-slate-900 border border-slate-600 rounded-lg p-4 font-sans text-sm text-slate-300 focus:outline-none focus:border-emerald-500 transition placeholder:text-slate-600">{{ submitted_text }}</textarea>
+                
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-slate-900 font-extrabold py-3 px-4 rounded-lg cursor-pointer transition shadow-lg shadow-emerald-950/40">
+                    Execute Diagnostics
+                </button>
+            </form>
+        </div>
+
+        <!-- RIGHT PANEL: REAL-TIME TELEMETRY DATA DISPLAY -->
+        <div class="lg:col-span-7 space-y-6">
+            {% if results %}
+                <!-- HIGH LEVEL METRICS -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-slate-800 border border-slate-700 rounded-xl p-5 shadow-lg">
+                        <span class="block text-xs uppercase tracking-wider text-slate-400 font-medium">Total Tokens Parsed</span>
+                        <span class="text-3xl font-black text-emerald-400 mt-1 block">{{ results.total_words }}</span>
+                    </div>
+                    <div class="bg-slate-800 border border-slate-700 rounded-xl p-5 shadow-lg">
+                        <span class="block text-xs uppercase tracking-wider text-slate-400 font-medium">Unique Core Words</span>
+                        <span class="text-3xl font-black text-cyan-400 mt-1 block">{{ results.unique_words }}</span>
+                    </div>
+                </div>
+
+                <!-- KEYWORD FREQUENCY GRID COMPONENT -->
+                <div class="bg-slate-800 border border-slate-700 rounded-xl p-6 shadow-lg">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-slate-300 mb-4 border-b border-slate-700 pb-2">Frequency Matrix Analysis</h3>
+                    <div class="flex flex-wrap gap-3">
+                        {% for item in results.top_keywords %}
+                            <div class="flex items-center bg-slate-900/80 border border-slate-700/60 rounded-full px-4 py-2 hover:border-emerald-500/50 transition group">
+                                <span class="font-semibold text-slate-200 text-sm tracking-wide group-hover:text-emerald-400 transition">{{ item.word }}</span>
+                                <span class="ml-2.5 bg-slate-800 text-xs font-bold px-2 py-0.5 rounded-full text-slate-400 border border-slate-700 group-hover:bg-emerald-950 group-hover:text-emerald-300 transition">{{ item.count }}</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% else %}
+                <!-- EMPTY MATRIX PLACEHOLDER VIEW -->
+                <div class="bg-slate-800/40 border border-dashed border-slate-700 rounded-xl h-full flex flex-col items-center justify-center p-12 text-center text-slate-500">
+                    <span class="text-4xl mb-3">📈</span>
+                    <h3 class="font-bold text-slate-400 text-base">Awaiting System Data</h3>
+                    <p class="text-xs text-slate-500 max-w-xs mt-1">Input target string content into the ingestion channel block and tap execution to pull frequency analytics.</p>
+                </div>
+            {% endif %}
+        </div>
+
+    </div>
+
+</body>
+</html>
